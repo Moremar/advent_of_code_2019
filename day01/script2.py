@@ -6,8 +6,8 @@ def fuel_required(mass):
     return floor(mass / 3) - 2
 
 
-def fuel_for_fuel(mass):
-    """Fuel required for a given mass of fuel (calculated recursively)"""
+def additional_fuel(mass):
+    """Fuel required for a given mass of fuel"""
     fuel = 0
     fuel_delta = fuel_required(mass)
     while 0 < fuel_delta:
@@ -16,17 +16,17 @@ def fuel_for_fuel(mass):
     return fuel
 
 
-def fuel_for_module(mass):
+def total_fuel(mass):
     # The fuel required by a module is the sum of the fuel required by its mass
-    # and the fuel required by the mass of this fuel (calculated recursively)
-    fuel_module = fuel_required(mass)
-    fuel_fuel = fuel_for_fuel(fuel_module)
-    return fuel_module + fuel_fuel
+    # and the fuel required by the mass of this fuel
+    for_module = fuel_required(mass)
+    for_fuel = additional_fuel(for_module)
+    return for_module + for_fuel
 
 
 def solve(data):
     """Compute the total fuel requirement"""
-    return sum([fuel_for_module(mass) for mass in data])
+    return sum([total_fuel(mass) for mass in data])
 
 
 def parse(file_name):
