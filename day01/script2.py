@@ -18,7 +18,7 @@ def fuel_for_fuel(mass):
 
 def fuel_for_module(mass):
     # The fuel required by a module is the sum of the fuel required by its mass
-    # and the sume of the fuel required by the mass of this fuel (calculated recursively)
+    # and the fuel required by the mass of this fuel (calculated recursively)
     fuel_module = fuel_required(mass)
     fuel_fuel = fuel_for_fuel(fuel_module)
     return fuel_module + fuel_fuel
