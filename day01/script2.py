@@ -1,9 +1,4 @@
-from math import floor
-
-
-def fuel_required(mass):
-    """Fuel required for a given mass"""
-    return floor(mass / 3) - 2
+from day01.script1 import parse, fuel_required
 
 
 def additional_fuel(mass):
@@ -27,12 +22,6 @@ def total_fuel(mass):
 def solve(data):
     """Compute the total fuel requirement"""
     return sum([total_fuel(mass) for mass in data])
-
-
-def parse(file_name):
-    """Parse the input file"""
-    with open(file_name, "r") as f:
-        return [int(line) for line in f.readlines()]
 
 
 if __name__ == '__main__':

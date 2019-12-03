@@ -1,14 +1,14 @@
 from math import floor
 
 
-def fuel_for_module(mass):
+def fuel_required(mass):
     """Fuel required for a given mass"""
     return floor(mass / 3) - 2
 
 
 def solve(data):
     """Compute the total fuel requirement"""
-    return sum([fuel_for_module(mass) for mass in data])
+    return sum([fuel_required(mass) for mass in data])
 
 
 def parse(file_name):
