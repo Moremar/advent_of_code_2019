@@ -7,7 +7,7 @@ def solve(limits):
     process("", matches, limits)
 
     # all digits are in order so all occurrences of a digit are grouped together
-    # we just need to count the occurrences of all digits and keep containing a digit with 2 occurrences
+    # we just need to count the occurrences of all digits and check if a digit has 2 occurrences
     valid = [match for match in matches if 2 in Counter(match).values()]
     return len(valid)
 
