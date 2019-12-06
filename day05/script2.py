@@ -65,7 +65,7 @@ def run_program(memory, system_id):
 
 
 def solve(memory):
-    # return last output
+    """Return the last value of the output"""
     return run_program(memory, 5)[-1]
 
 

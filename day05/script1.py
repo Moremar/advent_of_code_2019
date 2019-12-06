@@ -1,5 +1,6 @@
 
 def parse_opcode(token):
+    """Extract the opcode and the mode of all params"""
     opcode = token % 100
     modes = [0, 0, 0, 0]
     if token > 100:
@@ -9,6 +10,7 @@ def parse_opcode(token):
 
 
 def param_value(memory, position, mode):
+    """Get the value of a param according to its mode"""
     if mode == 0:  # position mode
         return memory[memory[position]]
     elif mode == 1: # immediate mode
@@ -53,7 +55,7 @@ def run_program(memory, system_id):
 
 
 def solve(memory):
-    # return last output
+    """Return the last value of the output"""
     return run_program(memory, 1)[-1]
 
 
