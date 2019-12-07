@@ -19,7 +19,7 @@ def param_value(memory, position, mode):
         raise ValueError("Unknown mode : ", mode)
 
 
-def run_program(memory, system_id):
+def run_program(memory, inputs):
     """Execute the successive instructions of the program"""
     instr_ptr = 0
     output = []
@@ -39,7 +39,7 @@ def run_program(memory, system_id):
             instr_ptr += 4
 
         elif opcode == 3:  # Store input in memory (program init)
-            val_to_insert = system_id
+            val_to_insert = inputs.pop(0)
             output_address = memory[instr_ptr + 1]
             memory[output_address] = val_to_insert
             instr_ptr += 2
@@ -56,7 +56,7 @@ def run_program(memory, system_id):
 
 def solve(memory):
     """Return the last value of the output"""
-    return run_program(memory, 1)[-1]
+    return run_program(memory, [1])[-1]
 
 
 def parse(file_name):
