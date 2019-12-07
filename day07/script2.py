@@ -2,7 +2,7 @@ from day07.script1 import parse, get_permutations, Program
 
 
 def solve(memory):
-    highest = 0
+    best_signal = 0
     for permutation in get_permutations([5, 6, 7, 8, 9]):
         amp1 = Program(memory, [permutation[0], 0])
         amp2 = Program(memory, [permutation[1]])
@@ -20,12 +20,14 @@ def solve(memory):
             amp4.run()
             amp5.add_input(amp4.outputs.pop(0))
             amp5.run()
-            output5 = amp5.outputs.pop(0)
+
+            signal = amp5.outputs.pop(0)
             if not amp5.completed:
-                amp1.add_input(output5)
-            elif output5 > highest:
-                highest = output5
-    return highest
+                amp1.add_input(signal)
+            elif signal > best_signal:
+                best_signal = signal
+
+    return best_signal
 
 
 if __name__ == '__main__':
