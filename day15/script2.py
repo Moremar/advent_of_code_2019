@@ -1,59 +1,47 @@
-from day14.script1 import parse, Reaction, produce_fuel
-
-# There is too much ore, so generating the fuel 1 by 1 takes too long
-# Instead we will generate the fuels X by X
-# First we take a big X and generate as many times X fuels as we can
-# Then we take a smaller X and generate fuels X by X with the remaining ores
-# Then we use the original reaction to generate the last fuels 1 by 1
+from day15.script1 import parse, visit_area, WALL, EMPTY, OXYGEN
 
 
-def solve(reactions):
+def get_bounds(visited):
+    return (min([x for (x, _) in visited]), max([x for (x, _) in visited]),
+            min([y for (_, y) in visited]), max([y for (_, y) in visited]))
 
-    ores = 1000000000000
-    fuels = 0
-    reserve = {}
 
-    # calibrated a bit arbitrary to get it to execute in ~5 sec
-    X1 = 100000
-    X2 = 1000
+def get_area_map(visited):
+    area = ""
+    (x_min, x_max, y_min, y_max) = get_bounds(visited)
+    for y in range(y_max, y_min - 1, -1):
+        for x in range(x_min, x_max + 1):
+            if (x, y) in visited:
+                area += "#" if visited[(x, y)] == WALL else "O" if visited[(x, y)] == OXYGEN else "."
+            else:
+                area += " "
+        area += "\n"
+    return area
 
-    # Multiply the FUEL reaction by X to generate fuel X by X
-    reac = [r for r in reactions if r.chemical_out[0] == "FUEL"][0]
-    reacX1 = Reaction([(e[0], e[1] * X1) for e in reac.chemical_in], ("FUEL", X1))
-    reacX2 = Reaction([(e[0], e[1] * X2) for e in reac.chemical_in], ("FUEL", X2))
-    reactions.remove(reac)
-    reactions.append(reacX1)
 
-    # Generate fuel X1 by X1
-    cost = produce_fuel(reactions, reserve)
-    while cost <= ores:
-        ores -= cost
-        fuels += X1
-        cost = produce_fuel(reactions, reserve)
+def has_oxygen_around(pos, visited):
+    for next_pos in [(pos[0]+1, pos[1]), (pos[0]-1, pos[1]), (pos[0], pos[1]+1), (pos[0], pos[1]-1)]:
+        if next_pos in visited and visited[next_pos] == OXYGEN:
+            return True
+    return False
 
-    # No longer possible to generate X1 fuels, switch to X2
-    reactions.remove(reacX1)
-    reactions.append(reacX2)
 
-    # Generate fuel X2 by X2
-    cost = produce_fuel(reactions, reserve)
-    while cost <= ores:
-        ores -= cost
-        fuels += X2
-        cost = produce_fuel(reactions, reserve)
+def solve(pgm):
+    (_, visited) = visit_area(pgm, False)
+    area = get_area_map(visited)
+    print("Area map:\n", area)
+    elapsed = 0
+    while "." in area:
+        elapsed += 1
+        to_oxygenize = []
+        for pos in visited:
+            if visited[pos] == EMPTY and has_oxygen_around(pos, visited):
+                to_oxygenize.append(pos)
+        for pos in to_oxygenize:
+            visited[pos] = OXYGEN
+        area = get_area_map(visited)
 
-    # No longer possible to generate X2 fuels, switch to the original reaction
-    reactions.remove(reacX2)
-    reactions.append(reac)
-
-    # Generate fuel 1 by 1
-    cost = produce_fuel(reactions, reserve)
-    while cost <= ores:
-        ores -= cost
-        fuels += 1
-        cost = produce_fuel(reactions, reserve)
-
-    return fuels
+    return elapsed
 
 
 if __name__ == '__main__':
