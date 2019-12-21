@@ -1,3 +1,5 @@
+from day18.script1 import read_char_matrix
+
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 
@@ -72,50 +74,40 @@ def parse(file_name):
     graph = {}
     inner_portals = {}
     outer_portals = {}
+    matrix = read_char_matrix(file_name)
 
-    # build graph with one edge per cell
-    with open(file_name, "r") as f:
-
-        # create a matrix of chars
-        ascii = []
-        for line in [line.strip("\n") for line in f.readlines()]:
-            row = []
-            for c in line:
-                row.append(c)
-            ascii.append(row)
-
-        # Go through the matrix of chars and build the graph
-        for i in range(len(ascii)):
-            for j in range(len(ascii[0])):
-                c = ascii[i][j]
-                if c in ["#", " "]:
-                    continue
-                elif c == ".":
-                    graph[(i, j)] = Cell(i, j, c)
-                    # connect to the cells above and before if needed
-                    for (x, y) in [(i - 1, j), (i, j - 1)]:
-                        if (x, y) in graph:
-                            graph[(x, y)].adjacent.append((i, j, 1))
-                            graph[(i, j)].adjacent.append((x, y, 1))
-                    continue
+    # Go through the matrix of chars and build the graph
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+            c = matrix[i][j]
+            if c in ["#", " "]:
+                continue
+            elif c == ".":
+                graph[(i, j)] = Cell(i, j, c)
+                # connect to the cells above and before if needed
+                for (x, y) in [(i - 1, j), (i, j - 1)]:
+                    if (x, y) in graph:
+                        graph[(x, y)].adjacent.append((i, j, 1))
+                        graph[(i, j)].adjacent.append((x, y, 1))
+                continue
+            else:
+                # A letter was found, need to locate the next one (on right or below)
+                letter_below = (i != len(matrix) - 1 and matrix[i + 1][j] in ALPHABET)
+                letter_right = (j != len(matrix[0]) - 1 and matrix[i][j + 1] in ALPHABET)
+                if letter_below:
+                    key = matrix[i][j] + matrix[i + 1][j]
+                    cell = [(x, y) for (x, y) in [(i - 1, j), (i + 2, j)]
+                            if 0 <= x < len(matrix) and matrix[x][y] == "."][0]
+                    portals = outer_portals if (i == 0 or i == len(matrix) - 2) else inner_portals
+                    portals[key] = cell
+                elif letter_right:
+                    key = matrix[i][j] + matrix[i][j + 1]
+                    cell = [(x, y) for (x, y) in [(i, j - 1), (i, j + 2)]
+                            if 0 <= y < len(matrix[0]) and matrix[x][y] == "."][0]
+                    portals = outer_portals if (j == 0 or j == len(matrix[0]) - 2) else inner_portals
+                    portals[key] = cell
                 else:
-                    # A letter was found, need to locate the next one (on right or below)
-                    letter_below = (i != len(ascii) - 1 and ascii[i + 1][j] in ALPHABET)
-                    letter_right = (j != len(ascii[0]) - 1 and ascii[i][j + 1] in ALPHABET)
-                    if letter_below:
-                        key = ascii[i][j] + ascii[i + 1][j]
-                        cell = [(x, y) for (x, y) in [(i - 1, j), (i + 2, j)]
-                                if 0 <= x < len(ascii) and ascii[x][y] == "."][0]
-                        portals = outer_portals if (i == 0 or i == len(ascii) - 2) else inner_portals
-                        portals[key] = cell
-                    elif letter_right:
-                        key = ascii[i][j] + ascii[i][j + 1]
-                        cell = [(x, y) for (x, y) in [(i, j - 1), (i, j + 2)]
-                                if 0 <= y < len(ascii[0]) and ascii[x][y] == "."][0]
-                        portals = outer_portals if (j == 0 or j == len(ascii[0]) - 2) else inner_portals
-                        portals[key] = cell
-                    else:
-                        continue  # 2nd char of an already processed portal
+                    continue  # 2nd char of an already processed portal
 
     # flag the portals
     for (key, portal) in outer_portals.items():
@@ -129,8 +121,8 @@ def parse(file_name):
     end = outer_portals["ZZ"]
     del outer_portals["ZZ"]
 
-    for i in range(1, len(ascii)):  # no need to check the edge, they are walls
-        for j in range(1, len(ascii[0])):
+    for i in range(1, len(matrix)):  # no need to check the edge, they are walls
+        for j in range(1, len(matrix[0])):
             if (i, j) in graph and graph[(i, j)].value == ".":
                 # if it is a dead end, we remove it
                 if len(graph[(i, j)].adjacent) == 1:
