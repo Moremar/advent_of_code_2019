@@ -1,25 +1,14 @@
 from day17.script1 import parse, Program
 
-ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-alphabet = "abcdefghijklmnopqrstuvwxyz"
-
-ASCII_TO_CODE = {" ": 32, "\n": 10, "#": 35, "@": 64, ".": 46, ":": 58, "'": 39}
-for (i, letter) in enumerate(ALPHABET):
-    ASCII_TO_CODE[letter] = i + 65
-for (i, letter) in enumerate(alphabet):
-    ASCII_TO_CODE[letter] = i + 97
-
-CODE_TO_ASCII = {}
-for (k, v) in ASCII_TO_CODE.items():
-    CODE_TO_ASCII[v] = k
-
 
 def to_ascii(code_array):
-    return "".join([CODE_TO_ASCII[code] for code in code_array])
+    """String corresponding to an array of ASCII codes"""
+    return "".join([chr(code) for code in code_array])
 
 
 def to_codes(s):
-    return [ASCII_TO_CODE[c] for c in s]
+    """Array of ASCII codes corresponding to a string"""
+    return [ord(c) for c in s]
 
 
 def run_instructions(memory, instructions):
