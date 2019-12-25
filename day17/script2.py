@@ -1,8 +1,5 @@
 from day17.script1 import parse, Program, get_world, NORTH, EAST, SOUTH, WEST, DIRECTIONS
 
-ASCII = {"A": 65, "B": 66, "C": 67, ",": 44, "R": 82, "L": 76, "n": 110, "y": 121,
-         "0": 48, "1": 49, "2": 50, "3": 51, "4": 52, "5": 53, "6": 54, "7": 55, "8": 56, "9": 57}
-
 
 def in_world(cell, world):
     return 0 <= cell[0] < len(world) and 0 <= cell[1] < len(world[0])
@@ -99,15 +96,9 @@ def add_commas(seq):
     return res
 
 
-def ascii_char(c):
-    if c in ASCII:
-        return ASCII[c]
-    else:
-        raise ValueError("No ASCII code for char ", c)
-
-
-def ascii_array(s):
-    return [ascii_char(c) for c in s]
+def to_codes(s):
+    """Return the the array of ASCII codes of all characters in the string"""
+    return [ord(c) for c in s]
 
 
 def solve(memory):
@@ -124,19 +115,19 @@ def solve(memory):
     pgm.memory[0] = 2
 
     # Input the routine
-    pgm.inputs += ascii_array(",".join(routine))
+    pgm.inputs += to_codes(",".join(routine))
     pgm.inputs += [10]
 
     # Input the 3 sequences A, B and C
-    pgm.inputs += ascii_array(add_commas(seq_a))
+    pgm.inputs += to_codes(add_commas(seq_a))
     pgm.inputs += [10]
-    pgm.inputs += ascii_array(add_commas(seq_b))
+    pgm.inputs += to_codes(add_commas(seq_b))
     pgm.inputs += [10]
-    pgm.inputs += ascii_array(add_commas(seq_c))
+    pgm.inputs += to_codes(add_commas(seq_c))
     pgm.inputs += [10]
 
     # Input the visual feedback
-    pgm.inputs += ascii_array("n")
+    pgm.inputs += to_codes("n")
     pgm.inputs += [10]
 
     pgm.run()
